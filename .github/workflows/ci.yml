@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup nim action
+        uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: '2.2.10'
+      - name: Test
+        run: nimble test -Y
