@@ -1,4 +1,4 @@
-## NIM-hash 
+## Nim-hash 
 
 A hash library for nim.
 
@@ -33,10 +33,10 @@ import nim_hash/sm3
 
 ~~~nim
 import std/strutils
-import nim_hash/sm3
+import nim_hash/sm3 as sm3
 
 when isMainModule:
-  var state = newSM3State()
+  var state = sm3.newState()
   state.update("abc")
   let hashed = state.finalize()
 
@@ -44,7 +44,7 @@ when isMainModule:
   for b in hashed:
     s.add(char(b))
 
-  // output: 66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0
+  # output: 66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0
   echo("output: ", s)
 ~~~
 

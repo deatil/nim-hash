@@ -1,17 +1,10 @@
 import unittest
 import std/assertions
 import std/strutils 
-import nim_hash/sm3
-
-test "rotl32":
-  check rotl32(15, 5) == 480
-  check p0(6) == 789510
-  check p1(3) == 25264131
-  check ff(3, 1, 2) == 3
-  check gg(3, 1, 6) == 5
+import nim_hash/sm3 as sm3
 
 template checkVector(exp, s: string) =
-  doAssert secureSM3Hash(s) == parseSecureSM3Hash(exp)
+  doAssert sm3.secureHash(s) == sm3.parseSecureHash(exp)
 
 test "single":
   checkVector("1ab21d8355cfa17f8e61194831e81a8f22bec8c728fefb747ed035eb5082aa2b", "")
@@ -23,21 +16,21 @@ test "single":
   checkVector("ad81805321f3e69d251235bf886a564844873b56dd7dde400f055b7dde39307a", "12345678901234567890123456789012345678901234567890123456789012345678901234567890")
 
 test "streaming":
-  var state = newSM3State()
-  doAssert SecureSM3Hash(state.finalize()) == parseSecureSM3Hash("1ab21d8355cfa17f8e61194831e81a8f22bec8c728fefb747ed035eb5082aa2b")
+  var state = sm3.newState()
+  doAssert sm3.SecureHash(state.finalize()) == sm3.parseSecureHash("1ab21d8355cfa17f8e61194831e81a8f22bec8c728fefb747ed035eb5082aa2b")
   
-  var state2 = newSM3State()
+  var state2 = sm3.newState()
   state2.update("abc")
-  doAssert SecureSM3Hash(state2.finalize()) == parseSecureSM3Hash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
+  doAssert sm3.SecureHash(state2.finalize()) == sm3.parseSecureHash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
   
-  var state3 = newSM3State()
+  var state3 = sm3.newState()
   state3.update("a")
   state3.update("b")
   state3.update("c")
-  doAssert SecureSM3Hash(state3.finalize()) == parseSecureSM3Hash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
+  doAssert sm3.SecureHash(state3.finalize()) == sm3.parseSecureHash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
 
 test "hash hex":
-  var state = newSM3State()
+  var state = sm3.newState()
   state.update("abc")
   let hashed = state.finalize()
 
@@ -46,10 +39,10 @@ test "hash hex":
     s.add(char(b))
   check s.toHex() == "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0"
 
-test "isValidSM3Hash":
-  doAssert not isValidSM3Hash("")
-  doAssert not isValidSM3Hash("66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E01")
-  doAssert not isValidSM3Hash("66C7F0F462EEGDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")
-  doAssert isValidSM3Hash("66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")
-  doAssert isValidSM3Hash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
-  doAssert isValidSM3Hash("66c7f0f462eeedd9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")
+test "isValidHash":
+  doAssert not sm3.isValidHash("")
+  doAssert not sm3.isValidHash("66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E01")
+  doAssert not sm3.isValidHash("66C7F0F462EEGDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")
+  doAssert sm3.isValidHash("66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")
+  doAssert sm3.isValidHash("66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0")
+  doAssert sm3.isValidHash("66c7f0f462eeedd9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")

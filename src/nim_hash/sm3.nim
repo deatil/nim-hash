@@ -4,21 +4,21 @@ from endians import bigEndian32
 when defined(nimPreviewSlimSystem):
   import std/syncio
 
-const SM3DigestSize = 32
-const SM3BlockSize = 64
+const DigestSize = 32
+const BlockSize = 64
 
 type
-  SM3Digest* = array[0 .. SM3DigestSize - 1, uint8]
-  SecureSM3Hash* = distinct SM3Digest
+  Digest* = array[0 .. DigestSize - 1, uint8]
+  SecureHash* = distinct Digest
 
 type
-  SM3State* = object
+  State* = object
     count:   int
     state:   array[8, uint32]
     buf:     array[64, byte]
     buf_len: int
 
-proc newSM3State*(): SM3State =
+proc newState*(): State =
   result.count = 0
   result.state[0] = 0x7380166f'u32
   result.state[1] = 0x4914b2b9'u32
@@ -41,22 +41,22 @@ const
     0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32
   ]
 
-proc rotl32*(x: uint32, n: uint8): uint32 =
+proc rotl32(x: uint32, n: uint8): uint32 =
   return (x shl n) or (x shr (32'u32 - n))
 
-proc p0*(x: uint32): uint32 =
+proc p0(x: uint32): uint32 =
   return x xor rotl32(x, 9) xor rotl32(x, 17)
 
-proc p1*(x: uint32): uint32 =
+proc p1(x: uint32): uint32 =
   return x xor rotl32(x, 15) xor rotl32(x, 23)
 
-proc ff*(x, y, z: uint32): uint32 =
+proc ff(x, y, z: uint32): uint32 =
   return (x and y) or (x and z) or (y and z)
 
-proc gg*(x, y, z: uint32): uint32 =
+proc gg(x, y, z: uint32): uint32 =
   return ((y xor z) and x) xor z
 
-proc transform(ctx: var SM3State) =
+proc transform(ctx: var State) =
   var a: array[8, uint32]
   var w: array[68, uint32]
 
@@ -138,7 +138,7 @@ proc transform(ctx: var SM3State) =
     ctx.state[i] = ctx.state[i] xor a[i]
     i += 1
 
-proc update*(ctx: var SM3State, data: openArray[char]) =
+proc update*(ctx: var State, data: openArray[char]) =
   var i = ctx.buf_len
   var j = 0
   var len = data.len
@@ -167,7 +167,7 @@ proc update*(ctx: var SM3State, data: openArray[char]) =
   ctx.count += data.len
   ctx.buf_len = i
 
-proc finalize*(ctx: var SM3State): SM3Digest =
+proc finalize*(ctx: var State): Digest =
   ctx.buf[ctx.buf_len] = 0x80
 
   for i in (ctx.buf_len + 1) ..< 64:
@@ -191,19 +191,19 @@ proc finalize*(ctx: var SM3State): SM3Digest =
   for i in 0 ..< 8:
     bigEndian32(addr ctx.state[i], addr ctx.state[i])
 
-  copyMem(addr result[0], addr ctx.state[0], SM3DigestSize)
+  copyMem(addr result[0], addr ctx.state[0], DigestSize)
 
-proc secureSM3Hash*(str: openArray[char]): SecureSM3Hash =
-  var state = newSM3State()
+proc secureHash*(str: openArray[char]): SecureHash =
+  var state = newState()
   state.update(str)
-  SecureSM3Hash(state.finalize())
+  SecureHash(state.finalize())
 
-proc parseSecureSM3Hash*(hash: string): SecureSM3Hash =
-  for i in 0 ..< SM3DigestSize:
-    SM3Digest(result)[i] = uint8(parseHexInt(hash[i*2] & hash[i*2 + 1]))
+proc parseSecureHash*(hash: string): SecureHash =
+  for i in 0 ..< DigestSize:
+    Digest(result)[i] = uint8(parseHexInt(hash[i*2] & hash[i*2 + 1]))
 
-proc `==`*(a, b: SecureSM3Hash): bool =
-  SM3Digest(a) == SM3Digest(b)
+proc `==`*(a, b: SecureHash): bool =
+  Digest(a) == Digest(b)
 
-proc isValidSM3Hash*(s: string): bool =
+proc isValidHash*(s: string): bool =
   s.len == 64 and allCharsInSet(s, HexDigits)
