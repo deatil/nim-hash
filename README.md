@@ -1,0 +1,2 @@
+# nim-hash
+nim-hash
