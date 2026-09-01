@@ -30,19 +30,7 @@ type
     buf:     array[64, byte]
     buf_len: int
 
-proc newSM3State*(): SM3State =
-  result.count = 0
-  result.buf_len = 0
-  result.state[0] = 0x7380166f'u32
-  result.state[1] = 0x4914b2b9'u32
-  result.state[2] = 0x172442d7'u32
-  result.state[3] = 0xda8a0600'u32
-  result.state[4] = 0xa96f30bc'u32
-  result.state[5] = 0x163138aa'u32
-  result.state[6] = 0xe38dee4d'u32
-  result.state[7] = 0xb0fb0e4e'u32
-
-proc reset*(ctx: var SM3State) =
+proc init(ctx: var SM3State) =
   ctx.count = 0
   ctx.buf_len = 0
   ctx.state[0] = 0x7380166f'u32
@@ -53,6 +41,12 @@ proc reset*(ctx: var SM3State) =
   ctx.state[5] = 0x163138aa'u32
   ctx.state[6] = 0xe38dee4d'u32
   ctx.state[7] = 0xb0fb0e4e'u32
+
+proc newSM3State*(): SM3State =
+  init(result)
+
+proc reset*(ctx: var SM3State) =
+  init(ctx)
 
 proc rotl32(x: uint32, n: uint8): uint32 {.inline.} =
   return (x shl n) or (x shr (32'u32 - n))
