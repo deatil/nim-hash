@@ -7,6 +7,18 @@ when defined(nimPreviewSlimSystem):
 const SM3DigestSize* = 32
 const SM3BlockSize* = 64
 
+const 
+  sbox: array[64, uint32] = [
+    0x79cc4519'u32, 0xf3988a32'u32, 0xe7311465'u32, 0xce6228cb'u32, 0x9cc45197'u32, 0x3988a32f'u32, 0x7311465e'u32, 0xe6228cbc'u32,
+    0xcc451979'u32, 0x988a32f3'u32, 0x311465e7'u32, 0x6228cbce'u32, 0xc451979c'u32, 0x88a32f39'u32, 0x11465e73'u32, 0x228cbce6'u32,
+    0x9d8a7a87'u32, 0x3b14f50f'u32, 0x7629ea1e'u32, 0xec53d43c'u32, 0xd8a7a879'u32, 0xb14f50f3'u32, 0x629ea1e7'u32, 0xc53d43ce'u32,
+    0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32,
+    0x7a879d8a'u32, 0xf50f3b14'u32, 0xea1e7629'u32, 0xd43cec53'u32, 0xa879d8a7'u32, 0x50f3b14f'u32, 0xa1e7629e'u32, 0x43cec53d'u32,
+    0x879d8a7a'u32, 0xf3b14f5'u32,  0x1e7629ea'u32, 0x3cec53d4'u32, 0x79d8a7a8'u32, 0xf3b14f50'u32, 0xe7629ea1'u32, 0xcec53d43'u32,
+    0x9d8a7a87'u32, 0x3b14f50f'u32, 0x7629ea1e'u32, 0xec53d43c'u32, 0xd8a7a879'u32, 0xb14f50f3'u32, 0x629ea1e7'u32, 0xc53d43ce'u32,
+    0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32
+  ]
+
 type
   SM3Digest* = array[0 .. SM3DigestSize - 1, uint8]
   SM3SecureHash* = distinct SM3Digest
@@ -20,6 +32,7 @@ type
 
 proc newSM3State*(): SM3State =
   result.count = 0
+  result.buf_len = 0
   result.state[0] = 0x7380166f'u32
   result.state[1] = 0x4914b2b9'u32
   result.state[2] = 0x172442d7'u32
@@ -29,17 +42,17 @@ proc newSM3State*(): SM3State =
   result.state[6] = 0xe38dee4d'u32
   result.state[7] = 0xb0fb0e4e'u32
 
-const 
-  sbox: array[64, uint32] = [
-    0x79cc4519'u32, 0xf3988a32'u32, 0xe7311465'u32, 0xce6228cb'u32, 0x9cc45197'u32, 0x3988a32f'u32, 0x7311465e'u32, 0xe6228cbc'u32,
-    0xcc451979'u32, 0x988a32f3'u32, 0x311465e7'u32, 0x6228cbce'u32, 0xc451979c'u32, 0x88a32f39'u32, 0x11465e73'u32, 0x228cbce6'u32,
-    0x9d8a7a87'u32, 0x3b14f50f'u32, 0x7629ea1e'u32, 0xec53d43c'u32, 0xd8a7a879'u32, 0xb14f50f3'u32, 0x629ea1e7'u32, 0xc53d43ce'u32,
-    0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32,
-    0x7a879d8a'u32, 0xf50f3b14'u32, 0xea1e7629'u32, 0xd43cec53'u32, 0xa879d8a7'u32, 0x50f3b14f'u32, 0xa1e7629e'u32, 0x43cec53d'u32,
-    0x879d8a7a'u32, 0xf3b14f5'u32,  0x1e7629ea'u32, 0x3cec53d4'u32, 0x79d8a7a8'u32, 0xf3b14f50'u32, 0xe7629ea1'u32, 0xcec53d43'u32,
-    0x9d8a7a87'u32, 0x3b14f50f'u32, 0x7629ea1e'u32, 0xec53d43c'u32, 0xd8a7a879'u32, 0xb14f50f3'u32, 0x629ea1e7'u32, 0xc53d43ce'u32,
-    0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32
-  ]
+proc reset*(ctx: var SM3State) =
+  ctx.count = 0
+  ctx.buf_len = 0
+  ctx.state[0] = 0x7380166f'u32
+  ctx.state[1] = 0x4914b2b9'u32
+  ctx.state[2] = 0x172442d7'u32
+  ctx.state[3] = 0xda8a0600'u32
+  ctx.state[4] = 0xa96f30bc'u32
+  ctx.state[5] = 0x163138aa'u32
+  ctx.state[6] = 0xe38dee4d'u32
+  ctx.state[7] = 0xb0fb0e4e'u32
 
 proc rotl32(x: uint32, n: uint8): uint32 {.inline.} =
   return (x shl n) or (x shr (32'u32 - n))

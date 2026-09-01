@@ -45,6 +45,17 @@ test "hash file":
   let hashed = secureHashFile("./tests/testdata/sm3data.txt")
   check $hashed == "2971D10C8842B70C979E55063480C50BACFFD90E98E2E60D2512AB8ABFDFCEC5"
 
+test "hash reset":
+  var state = newSM3State()
+  state.update("abc")
+  let hashed = state.finalize()
+  check hashed.toString().toHex() == "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0"
+
+  state.reset() 
+  state.update("abcdefghijklmnopqrstuvwxyz")
+  let hashed2 = state.finalize()
+  check hashed2.toString().toHex() == "B80FE97A4DA24AFC277564F66A359EF440462AD28DCC6D63ADB24D5C20A61595"
+
 test "isValidHash":
   doAssert not isValidSM3Hash("")
   doAssert not isValidSM3Hash("66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E01")

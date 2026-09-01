@@ -32,10 +32,10 @@ import nim_hash/sm3
 ### Get Starting
 
 ~~~nim
-import nim_hash/sm3 as sm3
+import nim_hash/sm3
 
 when isMainModule:
-  var state = sm3.newState()
+  var state = newSM3State()
   state.update("abc")
   let hashed = state.finalize()
 
