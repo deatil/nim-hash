@@ -32,7 +32,6 @@ import nim_hash/sm3
 ### Get Starting
 
 ~~~nim
-import std/strutils
 import nim_hash/sm3 as sm3
 
 when isMainModule:
@@ -40,12 +39,8 @@ when isMainModule:
   state.update("abc")
   let hashed = state.finalize()
 
-  var s = newStringOfCap(hashed.len)
-  for b in hashed:
-    s.add(char(b))
-
   # output: 66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0
-  echo("output: ", s)
+  echo("output: ", hashed.toString().toHex())
 ~~~
 
 ### Hash Functions
