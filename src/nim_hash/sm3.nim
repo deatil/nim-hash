@@ -25,7 +25,7 @@ type
 
 type
   SM3State* = object
-    count:   int
+    count:   uint64
     state:   array[8, uint32]
     buf:     array[64, byte]
     buf_len: int
@@ -171,7 +171,7 @@ proc update*(ctx: var SM3State, data: openArray[char]) =
     if i == 64:
       transform(ctx)
       i = 0
-  ctx.count += data.len
+  ctx.count += uint64(data.len)
   ctx.buf_len = i
 
 proc finalize*(ctx: var SM3State): SM3Digest =
@@ -185,7 +185,7 @@ proc finalize*(ctx: var SM3State): SM3Digest =
     for i in 0 ..< 64:
       ctx.buf[i] = 0x00
 
-  var bcount = uint64(ctx.count / 64)
+  var bcount = uint64(int(ctx.count) / 64)
 
   var bcount1 = uint32(bcount shr 23)
   var bcount2 = uint32((bcount shl 9) + (uint64(ctx.buf_len) shl 3))

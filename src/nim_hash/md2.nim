@@ -28,14 +28,13 @@ const
     20,
   ]
 
-
 type
   MD2Digest* = array[0 .. MD2DigestSize - 1, uint8]
   MD2SecureHash* = distinct MD2Digest
 
 type
   MD2State* = object
-    count:   int
+    count:   uint64
     state:   array[48, uint8]
     buf:     array[16, byte]
     buf_len: int
@@ -111,7 +110,7 @@ proc update*(ctx: var MD2State, data: openArray[char]) =
     if i == 16:
       transform(ctx, ctx.buf)
       i = 0
-  ctx.count += data.len
+  ctx.count += uint64(data.len)
   ctx.buf_len = i
 
 proc finalize*(ctx: var MD2State): MD2Digest =
