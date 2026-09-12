@@ -46,8 +46,8 @@ when isMainModule:
 ### Hash Functions
 
  - `sm3`: nim_hash/sm3
- - `sm3`: nim_hash/md2
- - `sm3`: nim_hash/md4
+ - `md2`: nim_hash/md2
+ - `md4`: nim_hash/md4
 
 
 ### LICENSE
