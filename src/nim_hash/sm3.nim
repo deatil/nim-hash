@@ -4,9 +4,6 @@ from endians import bigEndian32
 when defined(nimPreviewSlimSystem):
   import std/syncio
 
-const SM3DigestSize* = 32
-const SM3BlockSize* = 64
-
 const 
   sbox: array[64, uint32] = [
     0x79cc4519'u32, 0xf3988a32'u32, 0xe7311465'u32, 0xce6228cb'u32, 0x9cc45197'u32, 0x3988a32f'u32, 0x7311465e'u32, 0xe6228cbc'u32,
@@ -18,6 +15,9 @@ const
     0x9d8a7a87'u32, 0x3b14f50f'u32, 0x7629ea1e'u32, 0xec53d43c'u32, 0xd8a7a879'u32, 0xb14f50f3'u32, 0x629ea1e7'u32, 0xc53d43ce'u32,
     0x8a7a879d'u32, 0x14f50f3b'u32, 0x29ea1e76'u32, 0x53d43cec'u32, 0xa7a879d8'u32, 0x4f50f3b1'u32, 0x9ea1e762'u32, 0x3d43cec5'u32
   ]
+
+const SM3DigestSize* = 32
+const SM3BlockSize* = 64
 
 type
   SM3Digest* = array[0 .. SM3DigestSize - 1, uint8]

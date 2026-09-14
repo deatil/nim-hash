@@ -48,6 +48,7 @@ when isMainModule:
  - `sm3`: nim_hash/sm3
  - `md2`: nim_hash/md2
  - `md4`: nim_hash/md4
+ - `ripemd160`: nim_hash/ripemd160
 
 
 ### LICENSE

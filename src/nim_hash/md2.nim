@@ -3,9 +3,6 @@ import strutils
 when defined(nimPreviewSlimSystem):
   import std/syncio
 
-const MD2DigestSize* = 16
-const MD2BlockSize* = 16
-
 const 
   sbox: array[256, uint8] = [
     uint8 41,  46,  67,  201, 162, 216, 124, 1,   61,  54,  84,  161, 236, 240, 6,
@@ -27,6 +24,9 @@ const
     49,  68,  80,  180, 143, 237, 31,  26,  219, 153, 141, 51,  159, 17,  131,
     20,
   ]
+
+const MD2DigestSize* = 16
+const MD2BlockSize* = 16
 
 type
   MD2Digest* = array[0 .. MD2DigestSize - 1, uint8]

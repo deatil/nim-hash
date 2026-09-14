@@ -4,9 +4,6 @@ from endians import littleEndian32
 when defined(nimPreviewSlimSystem):
   import std/syncio
 
-const MD4DigestSize* = 16
-const MD4BlockSize* = 64
-
 const 
   shift1: array[4, int] = [
     int 3, 7, 11, 19,
@@ -26,8 +23,11 @@ const
   ]
 
   initBox: array[4, uint32] = [
-   0x67452301'u32, 0xEFCDAB89'u32, 0x98BADCFE'u32, 0x10325476'u32,
+    0x67452301'u32, 0xEFCDAB89'u32, 0x98BADCFE'u32, 0x10325476'u32,
   ]
+
+const MD4DigestSize* = 16
+const MD4BlockSize* = 64
 
 type
   MD4Digest* = array[0 .. MD4DigestSize - 1, uint8]
