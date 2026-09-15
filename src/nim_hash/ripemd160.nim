@@ -105,23 +105,15 @@ proc transform(ctx: var Ripemd160State) =
     alpha = rotate_left_32(alpha, int(r1[i])) + e
     beta = rotate_left_32(c, 10)
     a = e
-    tmp = b
-    b = alpha
-    c = tmp
-    tmp = d
-    d = beta
-    e = tmp
+    tmp = b; b = alpha; c = tmp
+    tmp = d; d = beta; e = tmp
 
     alpha = aa + (bb xor (cc or (not dd))) + x[int(n2[i])] + 0x50a28be6'u32
     alpha = rotate_left_32(alpha, int(r2[i])) + ee
     beta = rotate_left_32(cc, 10)
     aa = ee
-    tmp = bb
-    bb = alpha
-    cc = tmp
-    tmp = dd
-    dd = beta
-    ee = tmp
+    tmp = bb; bb = alpha; cc = tmp
+    tmp = dd; dd = beta; ee = tmp
 
     i += 1
 
@@ -130,24 +122,16 @@ proc transform(ctx: var Ripemd160State) =
     alpha = rotate_left_32(alpha, int(r1[i])) + e
     beta = rotate_left_32(c, 10)
     a = e
-    tmp = b
-    b = alpha
-    c = tmp
-    tmp = d
-    d = beta
-    e = tmp
+    tmp = b; b = alpha; c = tmp
+    tmp = d; d = beta; e = tmp
 
     # parallel line
     alpha = aa + ((bb and dd) or (cc and (not dd))) + x[int(n2[i])] + 0x5c4dd124'u32
     alpha = rotate_left_32(alpha, int(r2[i])) + ee
     beta = rotate_left_32(cc, 10)
     aa = ee
-    tmp = bb
-    bb = alpha
-    cc = tmp
-    tmp = dd
-    dd = beta
-    ee = tmp
+    tmp = bb; bb = alpha; cc = tmp
+    tmp = dd; dd = beta; ee = tmp
 
     i += 1
 
@@ -156,24 +140,16 @@ proc transform(ctx: var Ripemd160State) =
     alpha = rotate_left_32(alpha, int(r1[i])) + e
     beta = rotate_left_32(c, 10)
     a = e
-    tmp = b
-    b = alpha
-    c = tmp
-    tmp = d
-    d = beta
-    e = tmp
+    tmp = b; b = alpha; c = tmp
+    tmp = d; d = beta; e = tmp
 
     # parallel line
     alpha = aa + (bb or (not cc) xor dd) + x[int(n2[i])] + 0x6d703ef3'u32
     alpha = rotate_left_32(alpha, int(r2[i])) + ee
     beta = rotate_left_32(cc, 10)
     aa = ee
-    tmp = bb
-    bb = alpha
-    cc = tmp
-    tmp = dd
-    dd = beta
-    ee = tmp
+    tmp = bb; bb = alpha; cc = tmp
+    tmp = dd; dd = beta; ee = tmp
 
     i += 1
 
@@ -182,24 +158,16 @@ proc transform(ctx: var Ripemd160State) =
     alpha = rotate_left_32(alpha, int(r1[i])) + e
     beta = rotate_left_32(c, 10)
     a = e
-    tmp = b
-    b = alpha
-    c = tmp
-    tmp = d
-    d = beta
-    e = tmp
+    tmp = b; b = alpha; c = tmp
+    tmp = d; d = beta; e = tmp
 
     # parallel line
     alpha = aa + ((bb and cc) or ((not bb) and dd)) + x[int(n2[i])] + 0x7a6d76e9'u32
     alpha = rotate_left_32(alpha, int(r2[i])) + ee
     beta = rotate_left_32(cc, 10)
     aa = ee
-    tmp = bb
-    bb = alpha
-    cc = tmp
-    tmp = dd
-    dd = beta
-    ee = tmp
+    tmp = bb; bb = alpha; cc = tmp
+    tmp = dd; dd = beta; ee = tmp
 
     i += 1
 
@@ -208,24 +176,16 @@ proc transform(ctx: var Ripemd160State) =
     alpha = rotate_left_32(alpha, int(r1[i])) + e
     beta = rotate_left_32(c, 10)
     a = e
-    tmp = b
-    b = alpha
-    c = tmp
-    tmp = d
-    d = beta
-    e = tmp
+    tmp = b; b = alpha; c = tmp
+    tmp = d; d = beta; e = tmp
 
     # parallel line
     alpha = aa + (bb xor cc xor dd) + x[int(n2[i])]
     alpha = rotate_left_32(alpha, int(r2[i])) + ee
     beta = rotate_left_32(cc, 10)
     aa = ee
-    tmp = bb
-    bb = alpha
-    cc = tmp
-    tmp = dd
-    dd = beta
-    ee = tmp
+    tmp = bb; bb = alpha; cc = tmp
+    tmp = dd; dd = beta; ee = tmp
 
     i += 1
 

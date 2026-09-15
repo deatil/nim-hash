@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.0.6"
+version       = "0.0.7"
 author        = "deatil"
 description   = "A hash package for nim."
 license       = "Apache-2.0"
